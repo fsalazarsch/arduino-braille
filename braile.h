@@ -1,6 +1,5 @@
-#include <string.h>
-#include <wchar.h>
-#include "replace.h"
+#include "ws_functions.h"
+//funciones para pasar de una cadena de texto a braille
 
 //los ordinales no aparecerán para no entorpecer la regla de los grados
 
@@ -133,8 +132,6 @@ wchar_t supeescrito[2] = L"¯¯";
 
 int * call(wchar_t ch){
 
-	//wprintf(L"%lc ", ch);
-
 	switch(ch){
 	case 'a':
 		return a;
@@ -265,8 +262,7 @@ int * call(wchar_t ch){
 	 default:
 		return bks;
 	}
-}
-
+	}
 char * a_punto(int x, int y){
 
 	if ((x == 0) && (y == 0))
@@ -278,11 +274,7 @@ char * a_punto(int x, int y){
 	if ((x == 1) && (y == 1))
 		return "••";
 	return " ";
-
-}
-
-
-
+	}
 
 wchar_t *strip_tags(wchar_t *palabra){
 
@@ -305,7 +297,8 @@ wchar_t *strip_tags(wchar_t *palabra){
 	palabra = repl_wcs(palabra, L"</sub_izq>", L"*");
 	palabra = repl_wcs(palabra, L"<sup_izq>", L"¯¯?");
 	palabra = repl_wcs(palabra, L"</sup_izq>", L"*");
-
+	
+	return palabra;
 	}
 wchar_t *reepmplazar_caracteres_dobles(wchar_t *palabra){
 	// resuelve los caracteres multiples 
@@ -335,71 +328,49 @@ wchar_t *reepmplazar_caracteres_dobles(wchar_t *palabra){
 
 	return palabra;
 	}
-
 wchar_t *reepmplazar_numeros(wchar_t *palabra){
 
 	int n,i, total_n = 0;
 	wchar_t *aux;
-	while (1 == swscanf(palabra + total_n, L"%*[^0123456789]%d%n", &i, &n))
-		{
-    	total_n += n;
-    	wchar_t *snum2 = itoa(i, 10, 0);
-    	wchar_t *snum = itoa(i, 10, 1);
+	while (1 == swscanf(palabra + total_n, L"%*[^0123456789]%d%n", &i, &n)){
+		total_n += n;
+		wchar_t *snum2 = itoa(i, 10, 0);
+		wchar_t *snum = itoa(i, 10, 1);
 
-    	//wchar_t *snum2 = itoa(i, 10);
-        	
-			snum = repl_wcs(snum, L"1", L"a");
-			snum = repl_wcs(snum, L"2", L"b");
-			snum = repl_wcs(snum, L"3", L"c");
-			snum = repl_wcs(snum, L"4", L"d");
-			snum = repl_wcs(snum, L"5", L"e");
-			snum = repl_wcs(snum, L"6", L"f");
-			snum = repl_wcs(snum, L"7", L"g");
-			snum = repl_wcs(snum, L"8", L"h");
-			snum = repl_wcs(snum, L"9", L"i");
-			snum = repl_wcs(snum, L"0", L"j");
+		snum = repl_wcs(snum, L"1", L"a");
+		snum = repl_wcs(snum, L"2", L"b");
+		snum = repl_wcs(snum, L"3", L"c");
+		snum = repl_wcs(snum, L"4", L"d");
+		snum = repl_wcs(snum, L"5", L"e");
+		snum = repl_wcs(snum, L"6", L"f");
+		snum = repl_wcs(snum, L"7", L"g");
+		snum = repl_wcs(snum, L"8", L"h");
+		snum = repl_wcs(snum, L"9", L"i");
+		snum = repl_wcs(snum, L"0", L"j");
 			
-			palabra = repl_wcs(palabra, snum2, snum);
-
+		palabra = repl_wcs(palabra, snum2, snum);
 		}
 		return palabra;
 	}
-
-void mayus_a_minusculas(wchar_t *palabra){
-
-	printf("%ls\n", palabra);
+wchar_t *mayus_a_minusculas(wchar_t *palabra){
 
 	for (int i = 0; i< wcslen(palabra); i++){
+		if (iswupper(palabra[i]) == 1 ) {
 
-		if ((palabra[i] >= L'A') &&  (palabra[i] <= L'Z')) {
-			
-			//printf("%lc\n", palabra[i]);
-
-			static wchar_t pal[2] = {0};
+			wchar_t pal[] = L"  ";
 			pal[0] = L'ƒ';
 			pal[1] = towlower(palabra[i]);
-			
+
 			static wchar_t aux[1] = {0};
-			aux[0] = palabra[i];
-			//aux[1] = 0;
-
-			//palabra[i]
-
-			printf("%ls %ls\n", aux, pal);
-
+			aux[0] = palabra[i];			
 			i+=1;
-
 			palabra = repl_wcs(palabra, aux, pal);
-			i+=1;
-			
-			//printf("paso");
-
 		}
 	}
-	printf("%ls\n", palabra);
-}
+	return palabra;
+	}
 
-void tratamiento(wchar_t *palabra){
+wchar_t *tratamiento(wchar_t *palabra){
 	//poner caracteres dobles con si simil en braille
 	palabra = reepmplazar_caracteres_dobles(palabra);
 	//quitar tags de sub y super indice
@@ -407,16 +378,14 @@ void tratamiento(wchar_t *palabra){
 	// pasa los numeros a caracteres
 	palabra = reepmplazar_numeros(palabra);
 	//pasa las mayusculas a caracteres
-
+	palabra = mayus_a_minusculas(palabra);
 	//e invierte la cadena para ser pasada a braille
-
-	printf("%ls", palabra);
-}
+	palabra =reverse_wst(palabra);
+	//printf("%ls\n", palabra);
+	return palabra;
+	}
 
 void escribir(wchar_t *palabra){
-	
-
-	
 	for (int i = 0; i< wcslen(palabra); i++){
 		printf("%s ", a_punto(call(palabra[i])[0], call(palabra[i])[1]));
 		}
@@ -424,15 +393,12 @@ void escribir(wchar_t *palabra){
 
 	for (int i = 0; i< wcslen(palabra); i++){
 		printf("%s ", a_punto(call(palabra[i]) [2], call(palabra[i])[3]));
-		
 		}
 	printf("\n");
 	for (int i = 0; i< wcslen(palabra); i++){
 		printf("%s ", a_punto(call(palabra[i])[4], call(palabra[i])[5]));
 		}
-
-	printf("\n");
-	
+	printf("\n");	
 	}
 
 
