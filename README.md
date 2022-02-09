@@ -5,8 +5,8 @@ Software para impresion de braille usando arduino
 ### Apreciación de Archivos
 
 El archivo de texto simple a editar, puede contener los siguientes tags para formato**<br>
-  1) < sub><csub> : Para subindice<br>
-  2) < sup><csup> : Pra superindice<br>
+  1) < sub>< csub> : Para subindice<br>
+  2) < sup>< csup> : Pra superindice<br>
   3) < sub_izq><csub_izq> : Para subindice a la izquierda<br>
   4) < sup_izq><csup_izq> : Para superindice a la izquierda<br>
   5) < sub_escr><csub_escr> : Para subescritura<br>
