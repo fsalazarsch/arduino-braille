@@ -88,15 +88,15 @@ wchar_t *repl_wcs(wchar_t *str, wchar_t *from, wchar_t *to) {
 		ret[retlen] = L'\0';
 	}
 
-end_repl_wcs:
+	end_repl_wcs:
 	/* Free the cache and return the post-replacement string,
 	 * which will be NULL in the event of an error. */
 	free(pos_cache);
 	return ret;
-}
+	}
 
 
-wchar_t* itoa(int val, int base, int flag){
+wchar_t *itoa(int val, int base, int flag){
 	
 
 	if (val == 0){
@@ -131,9 +131,7 @@ wchar_t* itoa(int val, int base, int flag){
 	}
 	else
 		return L"0";
-}
-
-
+	}
 wchar_t *reverse_wst( wchar_t *str){
 
 	int length = wcslen(str);
@@ -144,6 +142,7 @@ wchar_t *reverse_wst( wchar_t *str){
 	for(int i = 0; i < length; i++)
 	    wchr[last_pos - i] = str[i];
 	return wchr;
+	}
 
-}
+
 
